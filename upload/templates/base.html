@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GLH{% endblock %} — Green Local Harvest</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        :root{
+            --g:#16A34A;--gd:#15803D;--gl:#DCFCE7;
+            --acc:#F59E0B;--accl:#FEF3C7;
+            --bg:#FAFAF8;--sf:#FFF;
+            --tx:#1A1A1A;--tx2:#525252;--tx3:#A3A3A3;
+            --br:#E5E5E5;--brl:#F0F0F0;
+            --red:#EF4444;--redl:#FEE2E2;
+            --bl:#DBEAFE;--bld:#1E40AF;
+            --r:10px;--rl:14px;
+        }
+        body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.55;min-height:100vh}
+        a{color:inherit;text-decoration:none}
+        img{max-width:100%;height:auto;display:block}
+        .skip{position:absolute;top:-100%;left:0;background:var(--g);color:#fff;padding:8px 16px;z-index:9999;font-size:13px}
+        .skip:focus{top:0}
+
+        /* Nav */
+        .nav{background:var(--sf);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:100;height:58px;display:flex;align-items:center;padding:0 clamp(16px,3vw,28px)}
+        .nav-in{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:1100px;margin:0 auto}
+        .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:19px}
+        .logo-m{width:34px;height:34px;background:var(--g);border-radius:9px;display:grid;place-items:center;color:#fff;font-size:17px}
+        .navl{display:flex;gap:24px;font-size:14px;font-weight:500;color:var(--tx2)}
+        .navl a:hover{color:var(--tx)}
+        .navr{display:flex;align-items:center;gap:12px}
+        .pts{font-size:11px;font-weight:600;color:var(--acc);background:var(--accl);padding:4px 10px;border-radius:16px}
+        .nu{font-size:13px;font-weight:600;line-height:1.2}
+        .nu small{display:block;font-weight:400;color:var(--tx3);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+        .ni{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:15px;border:1px solid var(--br);color:var(--tx2);position:relative;background:transparent;cursor:pointer}
+        .ni:hover{border-color:var(--tx2)}
+        .ndot{position:absolute;top:1px;right:1px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--sf)}
+        .nbadge{position:absolute;top:-3px;right:-5px;min-width:16px;height:16px;background:var(--g);color:#fff;font-size:9px;font-weight:700;border-radius:50%;display:grid;place-items:center;border:2px solid var(--sf)}
+        .cta{background:var(--g);color:#fff;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;border:none;cursor:pointer}
+        .cta:hover{background:var(--gd)}
+
+        /* Mobile bar */
+        .mbar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--sf);border-top:1px solid var(--br);z-index:100;padding:5px 0 env(safe-area-inset-bottom,4px)}
+        .mbar-in{display:flex;justify-content:space-around}
+        .mbar a{display:flex;flex-direction:column;align-items:center;gap:1px;font-size:10px;color:var(--tx3);padding:4px 8px;font-weight:500}
+        .mbar a .mi{font-size:19px}
+
+        /* Layout */
+        .wrap{max-width:1100px;margin:0 auto;padding:24px clamp(16px,3vw,28px)}
+        main{padding-bottom:32px}
+
+        /* Flash */
+        .fl-list{max-width:1100px;margin:0 auto;padding:0 clamp(16px,3vw,28px)}
+        .fl{padding:10px 16px;border-radius:7px;margin-top:10px;font-size:13px;font-weight:500}
+        .fl-success{background:var(--gl);color:#166534}
+        .fl-danger{background:var(--redl);color:#991B1B}
+        .fl-warning{background:var(--accl);color:#92400E}
+        .fl-info{background:var(--bl);color:var(--bld)}
+
+        /* Buttons */
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:7px;font-size:13px;font-weight:600;border:none;cursor:pointer;transition:all .15s;line-height:1}
+        .btn-p{background:var(--g);color:#fff}.btn-p:hover{background:var(--gd)}
+        .btn-d{background:var(--tx);color:#fff}.btn-d:hover{background:#333}
+        .btn-o{background:transparent;border:1.5px solid var(--br);color:var(--tx)}.btn-o:hover{border-color:var(--tx)}
+        .btn-r{background:var(--red);color:#fff}.btn-r:hover{background:#DC2626}
+        .btn-sm{padding:6px 12px;font-size:12px}
+        .btn-bl{width:100%}
+
+        /* Forms */
+        .fg{margin-bottom:16px}
+        .fl2{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:4px}
+        .fi,.fsel,.fta{width:100%;padding:10px 13px;border:1.5px solid var(--br);border-radius:7px;font-size:14px;background:var(--sf);color:var(--tx);font-family:inherit}
+        .fi:focus,.fsel:focus,.fta:focus{outline:none;border-color:var(--g);box-shadow:0 0 0 3px rgba(22,163,74,.12)}
+        .fsel{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M8 12L2 6h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+        .fta{resize:vertical;min-height:70px}
+        .fck{display:flex;align-items:center;gap:7px;font-size:13px}
+        .fck input{width:17px;height:17px;accent-color:var(--g)}
+        .fh{font-size:11px;color:var(--tx3);margin-top:3px}
+        .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+        /* Cards */
+        .card{background:var(--sf);border:1px solid var(--brl);border-radius:var(--rl);overflow:hidden}
+        .cp{padding:18px 22px}
+
+        /* Badges */
+        .badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+        .b-pending,.b-preparing{background:var(--accl);color:#92400E}
+        .b-ready,.b-dispatched{background:var(--gl);color:#166534}
+        .b-delivered{background:var(--bl);color:var(--bld)}
+        .b-cancelled{background:var(--redl);color:#991B1B}
+        .b-org{background:var(--gl);color:var(--g);font-size:11px}
+
+        /* Stats */
+        .sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:24px}
+        .stat{background:var(--sf);border:1px solid var(--brl);border-radius:var(--r);padding:16px 20px}
+        .stat-l{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--tx3);margin-bottom:3px}
+        .stat-v{font-size:24px;font-weight:700}
+        .stat-v.grn{color:var(--g)}
+
+        /* Product grid */
+        .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
+        .pc{background:var(--sf);border:1px solid var(--brl);border-radius:var(--r);overflow:hidden;transition:box-shadow .2s}
+        .pc:hover{box-shadow:0 8px 20px rgba(0,0,0,.07)}
+        .pc-img{width:100%;height:190px;object-fit:cover;background:var(--brl)}
+        .pc-no{width:100%;height:190px;background:linear-gradient(135deg,var(--gl),var(--accl));display:grid;place-items:center;font-size:44px;color:var(--g)}
+        .pc-b{padding:12px 14px 16px}
+        .pc-top{display:flex;justify-content:space-between;align-items:start;gap:6px;margin-bottom:3px}
+        .pc h3{font-size:14px;font-weight:600}
+        .pc-m{font-size:11px;color:var(--tx3);margin-bottom:5px}
+        .pc-pr{font-size:18px;font-weight:700;color:var(--g)}
+        .pc-pr small{font-size:11px;font-weight:400;color:var(--tx3)}
+        .pc-st{font-size:11px;color:var(--tx3);margin-top:3px}
+        .fresh{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;color:#fff;background:var(--g)}
+
+        /* Order cards */
+        .oc{background:var(--sf);border:1px solid var(--brl);border-radius:var(--r);padding:16px 20px;margin-bottom:10px}
+        .oc-h{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:5px}
+        .oc-id{font-size:16px;font-weight:700}
+        .oc-t{font-size:20px;font-weight:700}
+        .oc-m{font-size:12px;color:var(--tx3)}
+
+        /* Tracking */
+        .track{display:flex;align-items:flex-start;margin:18px 0}
+        .ts{flex:1;text-align:center}
+        .td{width:20px;height:20px;border-radius:50%;margin:0 auto 4px;border:3px solid var(--br);background:var(--sf)}
+        .td.done{border-color:var(--g);background:var(--g)}
+        .td.now{border-color:var(--g);background:var(--g);box-shadow:0 0 0 4px rgba(22,163,74,.18)}
+        .tl{font-size:9px;color:var(--tx3);text-transform:capitalize;font-weight:500}
+        .tl.now{color:var(--g);font-weight:700}
+        .tline{flex:1;height:3px;background:var(--br);margin-top:9px}
+        .tline.done{background:var(--g)}
+
+        /* Hero */
+        .hero{background:linear-gradient(135deg,#166534,#16A34A);color:#fff;border-radius:var(--rl);padding:clamp(28px,5vw,48px);margin-bottom:28px}
+        .hero h1{font-size:clamp(24px,4vw,36px);font-weight:700;line-height:1.15;margin-bottom:12px}
+        .hero h1 em{color:#86EFAC;font-style:italic}
+        .hero p{font-size:14px;opacity:.88;max-width:460px;margin-bottom:20px}
+        .hero-b{display:flex;gap:10px;flex-wrap:wrap}
+        .hero-b .btn{padding:11px 24px}
+
+        /* Auth */
+        .auth{max-width:420px;margin:44px auto}
+        .auth .cp{padding:32px 28px}
+        .auth h1{font-size:22px;font-weight:700;text-align:center;margin-bottom:22px}
+        .auth-f{text-align:center;margin-top:16px;font-size:13px;color:var(--tx3)}
+        .auth-f a{color:var(--g);font-weight:600}
+
+        /* Filter */
+        .fbar{background:var(--sf);border:1px solid var(--brl);border-radius:var(--r);padding:14px 18px;margin-bottom:18px}
+        .fbar-r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+        .fbar-r .fi,.fbar-r .fsel{flex:1;min-width:130px;padding:8px 11px;font-size:13px}
+
+        /* Image preview */
+        .imgp{max-width:240px;height:150px;object-fit:cover;border-radius:7px;margin-top:6px;border:1px solid var(--br)}
+
+        /* Danger zone */
+        .dz{border:2px solid var(--red);border-radius:var(--r);padding:20px;margin-top:24px}
+        .dz h3{color:var(--red);font-size:14px;margin-bottom:5px}
+
+        /* Empty */
+        .empty{text-align:center;padding:50px 20px;color:var(--tx3)}
+        .empty-i{font-size:48px;margin-bottom:12px;opacity:.5}
+
+        /* Util */
+        .flex{display:flex}.g8{gap:8px}.g12{gap:12px}.ac{align-items:center}.jb{justify-content:space-between}
+        .mt4{margin-top:4px}.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt24{margin-top:24px}
+        .mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}.mb24{margin-bottom:24px}
+        .tc{text-align:center}
+        .div{height:1px;background:var(--br);margin:18px 0}
+        .link{color:var(--g);font-weight:600;font-size:13px}
+        .stitle{font-size:17px;font-weight:700;margin:24px 0 12px}
+        .ptitle{font-size:clamp(22px,3vw,28px);font-weight:700;margin-bottom:20px}
+
+        :focus-visible{outline:3px solid var(--g);outline-offset:2px}
+        @media(max-width:768px){
+            .navl{display:none}
+            .mbar{display:block}
+            main{padding-bottom:75px}
+            .pgrid{grid-template-columns:1fr 1fr;gap:10px}
+            .pc-img,.pc-no{height:140px}
+            .auth{margin:20px 14px}
+            .frow{grid-template-columns:1fr}
+        }
+        @media(max-width:480px){.pgrid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav" aria-label="Main">
+<div class="nav-in">
+    <a href="{{ url_for('index') }}" class="logo"><span class="logo-m">🌿</span>GLH</a>
+    {% if user %}
+    <div class="navl">
+        {% if user.role == 'buyer' %}
+        <a href="{{ url_for('marketplace') }}">Marketplace</a>
+        <a href="{{ url_for('my_orders') }}">My Orders</a>
+        <a href="{{ url_for('about') }}">About</a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('manage_products') }}">My Products</a>
+        <a href="{{ url_for('marketplace') }}">Marketplace</a>
+        {% endif %}
+    </div>
+    <div class="navr">
+        {% if user.role == 'buyer' %}<span class="pts">⭐ {{ user.loyalty_points }}</span>{% endif %}
+        <a href="{{ url_for('account') }}" class="nu">{{ user.full_name }}<small>{{ user.role }}</small></a>
+        {% if user.role == 'buyer' %}
+        <a href="{{ url_for('cart_view') }}" class="ni" aria-label="Basket">🛒{% if cart_count %}<span class="nbadge">{{ cart_count }}</span>{% endif %}</a>
+        {% endif %}
+        <a href="{{ url_for('notifications') }}" class="ni" aria-label="Notifications">🔔{% if unread_count %}<span class="ndot"></span>{% endif %}</a>
+        <a href="{{ url_for('logout') }}" class="ni" aria-label="Log out">↗</a>
+    </div>
+    {% else %}
+    <div class="navl"></div>
+    <div class="navr">
+        <a href="{{ url_for('login') }}" class="btn btn-o btn-sm">Log in</a>
+        <a href="{{ url_for('register') }}" class="cta">Sign up</a>
+    </div>
+    {% endif %}
+</div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="fl-list" role="alert">
+    {% for cat, msg in messages %}<div class="fl fl-{{ cat }}">{{ msg }}</div>{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+{% if user %}
+<nav class="mbar" aria-label="Mobile">
+<div class="mbar-in">
+    {% if user.role == 'buyer' %}
+    <a href="{{ url_for('marketplace') }}"><span class="mi">🛍</span>Shop</a>
+    <a href="{{ url_for('my_orders') }}"><span class="mi">📋</span>Orders</a>
+    <a href="{{ url_for('cart_view') }}"><span class="mi">🛒</span>Basket</a>
+    <a href="{{ url_for('notifications') }}"><span class="mi">🔔</span>Alerts</a>
+    <a href="{{ url_for('account') }}"><span class="mi">👤</span>Account</a>
+    {% else %}
+    <a href="{{ url_for('dashboard') }}"><span class="mi">📊</span>Dashboard</a>
+    <a href="{{ url_for('manage_products') }}"><span class="mi">📦</span>Products</a>
+    <a href="{{ url_for('marketplace') }}"><span class="mi">🛍</span>Shop</a>
+    <a href="{{ url_for('notifications') }}"><span class="mi">🔔</span>Alerts</a>
+    <a href="{{ url_for('account') }}"><span class="mi">👤</span>Account</a>
+    {% endif %}
+</div>
+</nav>
+{% endif %}
+</body>
+</html>

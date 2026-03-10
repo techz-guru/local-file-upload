@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}My Products{% endblock %}
+{% block content %}
+<div class="wrap">
+    <div class="flex ac jb mb24" style="flex-wrap:wrap;gap:10px"><h1 class="ptitle" style="margin:0">My Products</h1><a href="{{ url_for('add_product') }}" class="btn btn-p">+ Add Product</a></div>
+    {% if products %}
+    <div class="pgrid">
+        {% for p in products %}
+        <div class="pc" {% if not p.is_active %}style="opacity:.4"{% endif %}>
+            {% if p.has_image() %}<img src="{{ p.get_image() }}" alt="{{ p.name }}" class="pc-img">{% else %}<div class="pc-no">🌿</div>{% endif %}
+            <div class="pc-b">
+                <div class="pc-top"><h3>{{ p.name }}</h3>{% if p.organic %}<span class="badge b-org">Organic</span>{% endif %}</div>
+                <p class="pc-st">{{ p.available }} {{ p.unit }} in stock</p>
+                <p class="pc-pr mt4">£{{ '%.2f'|format(p.price) }}<small>/{{ p.unit }}</small></p>
+                <div class="flex g8 mt12">
+                    <a href="{{ url_for('edit_product', id=p.id) }}" class="btn btn-o btn-sm" style="flex:1">Edit</a>
+                    {% if p.is_active %}<form action="{{ url_for('delete_product', id=p.id) }}" method="POST" onsubmit="return confirm('Remove?')" style="flex:1"><button type="submit" class="btn btn-r btn-sm btn-bl">Remove</button></form>{% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}<div class="empty"><div class="empty-i">🌱</div><p>No products yet.</p><a href="{{ url_for('add_product') }}" class="btn btn-p mt16">Add Product</a></div>{% endif %}
+</div>
+{% endblock %}

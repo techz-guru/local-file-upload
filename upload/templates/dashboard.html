@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="wrap">
+    <div class="flex ac jb mb24" style="flex-wrap:wrap;gap:10px"><h1 class="ptitle" style="margin:0">Dashboard</h1><a href="{{ url_for('add_product') }}" class="btn btn-p">+ Add Product</a></div>
+    <div class="sgrid">
+        <div class="stat"><p class="stat-l">Total Sales</p><p class="stat-v">£{{ '%.2f'|format(total_sales) }}</p></div>
+        <div class="stat"><p class="stat-l">Active Listings</p><p class="stat-v">{{ active_listings }}</p></div>
+        <div class="stat"><p class="stat-l">Pending Orders</p><p class="stat-v grn">{{ pending_count }}</p></div>
+    </div>
+    <h2 class="stitle">Orders</h2>
+    {% if orders %}
+        {% for o in orders %}
+        <div class="oc">
+            <div class="oc-h"><div class="flex ac g8"><span class="oc-id">Order #{{ o.id }}</span><span class="badge b-{{ o.status }}">{{ o.status|upper }}</span></div></div>
+            <p class="oc-m">{{ o.placed_on.strftime('%d/%m/%Y') }} · {{ o.buyer.full_name }}</p>
+            {% if o.scheduled_for %}<p class="oc-m">📅 {{ o.scheduled_for.strftime('%d/%m/%Y') }}</p>{% endif %}
+            <p class="oc-t mt8">£{{ '%.2f'|format(o.total) }}</p>
+            <div class="flex g8 mt12">
+                {% if o.next_action() %}<form action="{{ url_for('advance_order', id=o.id) }}" method="POST"><button type="submit" class="btn {% if o.status == 'pending' %}btn-d{% else %}btn-p{% endif %} btn-sm">{{ o.next_action() }}</button></form>{% endif %}
+                <a href="{{ url_for('order_detail', id=o.id) }}" class="btn btn-o btn-sm">Details</a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}<div class="empty"><div class="empty-i">📋</div><p>No orders yet.</p></div>{% endif %}
+</div>
+{% endblock %}

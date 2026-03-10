@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:580px">
+    <h1 class="ptitle">Notifications</h1>
+    {% if notifications %}
+        {% for n in notifications %}<div class="oc" {% if not n.is_read %}style="border-left:3px solid var(--g)"{% endif %}><p style="font-size:13px">{{ n.message }}</p><p class="oc-m mt4">{{ n.created_at.strftime('%d/%m/%Y %H:%M') }}</p></div>{% endfor %}
+    {% else %}<div class="empty"><div class="empty-i">🔔</div><p>No notifications.</p></div>{% endif %}
+</div>
+{% endblock %}

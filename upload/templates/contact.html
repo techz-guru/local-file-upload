@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:560px">
+    <h1 class="ptitle">Contact Us</h1>
+    <div class="card cp">
+        <div class="fg"><label class="fl2">Name</label><input class="fi"></div>
+        <div class="fg"><label class="fl2">Email</label><input type="email" class="fi"></div>
+        <div class="fg"><label class="fl2">Message</label><textarea class="fta" rows="4" placeholder="How can we help?"></textarea></div>
+        <button class="btn btn-p" onclick="alert('Sent!')">Send</button>
+    </div>
+</div>
+{% endblock %}

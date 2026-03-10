@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+{% block content %}
+<div class="wrap">
+    <h1 class="ptitle">Your Orders</h1>
+    {% if orders %}
+        {% for o in orders %}
+        <a href="{{ url_for('order_detail', id=o.id) }}" style="display:block">
+        <div class="oc"><div class="oc-h"><div class="flex ac g8"><span class="oc-id">Order #{{ o.id }}</span><span class="badge b-{{ o.status }}">{{ o.status|upper }}</span></div><span class="oc-t">£{{ '%.2f'|format(o.total) }}</span></div>
+        <p class="oc-m">Placed {{ o.placed_on.strftime('%d/%m/%Y') }}</p>
+        {% if o.scheduled_for %}<p class="oc-m">📅 {{ o.scheduled_for.strftime('%d/%m/%Y') }}</p>{% endif %}</div></a>
+        {% endfor %}
+    {% else %}<div class="empty"><div class="empty-i">📋</div><p>No orders yet.</p><a href="{{ url_for('marketplace') }}" class="btn btn-p mt16">Start Shopping</a></div>{% endif %}
+</div>
+{% endblock %}

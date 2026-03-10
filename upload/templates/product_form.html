@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{% if editing %}Edit{{ product.name }}{% else %}Add Product{% endif %}{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:580px">
+    <a href="{{ url_for('manage_products') }}" class="link">← Back</a>
+    <h1 class="ptitle mt16">{% if editing %}Edit Product{% else %}Add Product{% endif %}</h1>
+    <form method="POST" enctype="multipart/form-data" action="{% if editing %}{{ url_for('edit_product', id=product.id) }}{% else %}{{ url_for('add_product') }}{% endif %}">
+        <div class="card cp mb16">
+            <div class="fg"><label class="fl2" for="name">Name</label><input type="text" id="name" name="name" class="fi" required value="{{ product.name if editing else '' }}"></div>
+            <div class="frow">
+                <div class="fg"><label class="fl2" for="category">Category</label><select id="category" name="category" class="fsel">{% for c in ['Vegetables','Fruits','Dairy & Eggs','Meat','Pantry','Baked Goods','Other'] %}<option value="{{ c }}" {% if editing and product.category == c %}selected{% endif %}>{{ c }}</option>{% endfor %}</select></div>
+                <div class="fg"><label class="fl2" for="unit">Unit</label><select id="unit" name="unit" class="fsel">{% for u in ['kg','g','dozen','litre','ml','jar','bunch','each','bag','punnet'] %}<option value="{{ u }}" {% if editing and product.unit == u %}selected{% endif %}>{{ u }}</option>{% endfor %}</select></div>
+            </div>
+            <div class="frow">
+                <div class="fg"><label class="fl2" for="price">Price (£)</label><input type="number" id="price" name="price" class="fi" step="0.01" min="0.01" required value="{{ product.price if editing else '' }}"></div>
+                <div class="fg"><label class="fl2" for="available">Stock</label><input type="number" id="available" name="available" class="fi" step="0.5" min="0" required value="{{ product.available if editing else '' }}"></div>
+            </div>
+            <div class="fg"><label class="fl2" for="harvest_date">Harvest Date</label><input type="date" id="harvest_date" name="harvest_date" class="fi" value="{{ product.harvest_date.strftime('%Y-%m-%d') if editing and product.harvest_date else '' }}"></div>
+            <div class="fg"><label class="fck"><input type="checkbox" name="organic" value="1" {% if editing and product.organic %}checked{% endif %}> Organic</label></div>
+        </div>
+        <div class="card cp mb16">
+            <div class="frow">
+                <div class="fg"><label class="fl2" for="farm_name">Farm Name</label><input type="text" id="farm_name" name="farm_name" class="fi" value="{{ product.farm_name if editing else '' }}"></div>
+                <div class="fg"><label class="fl2" for="location">Location</label><input type="text" id="location" name="location" class="fi" placeholder="e.g. Kent" value="{{ product.location if editing else '' }}"></div>
+            </div>
+            <div class="fg"><label class="fl2" for="description">Description</label><textarea id="description" name="description" class="fta">{{ product.description if editing else '' }}</textarea></div>
+        </div>
+        <div class="card cp mb16">
+            <h2 style="font-size:14px;font-weight:700;margin-bottom:4px">Image</h2>
+            <p class="fh mb16">Upload or paste URL. Upload takes priority.</p>
+            <div class="fg"><label class="fl2" for="image_file">Upload</label><input type="file" id="image_file" name="image_file" accept="image/*" class="fi" onchange="pu(this)"><p class="fh">PNG JPG GIF WEBP — max 5MB</p></div>
+            <div class="fg"><label class="fl2" for="image_url">Or URL</label><input type="url" id="image_url" name="image_url" class="fi" placeholder="https://…" value="{{ product.image_url if editing and product.image_url else '' }}" oninput="pv(this.value)"></div>
+            <div>{% if editing and product.has_image() %}<img src="{{ product.get_image() }}" alt="Current" class="imgp" id="prev">{% else %}<img src="" alt="" class="imgp" id="prev" style="display:none">{% endif %}</div>
+        </div>
+        <button type="submit" class="btn btn-p btn-bl">{% if editing %}Save Changes{% else %}Add Product{% endif %}</button>
+    </form>
+</div>
+<script>
+function pu(el){var p=document.getElementById('prev');if(el.files&&el.files[0]){var r=new FileReader();r.onload=function(e){p.src=e.target.result;p.style.display='block'};r.readAsDataURL(el.files[0]);document.getElementById('image_url').value=''}}
+function pv(u){var p=document.getElementById('prev');if(u){p.src=u;p.style.display='block';document.getElementById('image_file').value=''}else{p.style.display='none'}}
+</script>
+{% endblock %}

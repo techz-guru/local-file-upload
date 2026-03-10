@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Account{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:560px">
+    <h1 class="ptitle">Account</h1>
+    <div class="card cp mb16">
+        <h2 style="font-size:14px;font-weight:700;margin-bottom:12px">Profile</h2>
+        <form method="POST"><input type="hidden" name="action" value="update_profile">
+            <div class="fg"><label class="fl2" for="fn">Name</label><input type="text" id="fn" name="full_name" class="fi" value="{{ user.full_name }}" required></div>
+            <div class="fg"><label class="fl2" for="em">Email</label><input type="email" id="em" name="email" class="fi" value="{{ user.email }}" required></div>
+            <div class="frow"><div class="fg"><label class="fl2">Role</label><input class="fi" value="{{ user.role|capitalize }}" disabled></div>
+            {% if user.role == 'buyer' %}<div class="fg"><label class="fl2">Points</label><input class="fi" value="{{ user.loyalty_points }}" disabled></div>{% endif %}</div>
+            <button type="submit" class="btn btn-p">Save</button>
+        </form>
+    </div>
+    <div class="card cp mb16">
+        <h2 style="font-size:14px;font-weight:700;margin-bottom:12px">Change Password</h2>
+        <form method="POST"><input type="hidden" name="action" value="change_password">
+            <div class="fg"><label class="fl2" for="cpw">Current Password</label><input type="password" id="cpw" name="current_password" class="fi" required></div>
+            <div class="fg"><label class="fl2" for="npw">New Password</label><input type="password" id="npw" name="new_password" class="fi" required minlength="6"><p class="fh">Min 6 characters</p></div>
+            <div class="fg"><label class="fl2" for="np2">Confirm</label><input type="password" id="np2" name="new_password_confirm" class="fi" required></div>
+            <button type="submit" class="btn btn-p">Update Password</button>
+        </form>
+    </div>
+    <div class="dz">
+        <h3>Delete Account</h3><p style="font-size:12px;color:var(--tx2);margin-bottom:12px">Permanently deactivates your account. Cannot be undone.</p>
+        <form method="POST" onsubmit="return document.getElementById('cd').value==='DELETE'"><input type="hidden" name="action" value="delete_account">
+            <div class="fg"><label class="fl2" for="cd">Type DELETE</label><input type="text" id="cd" name="confirm_delete" class="fi" placeholder="DELETE" autocomplete="off"></div>
+            <button type="submit" class="btn btn-r">Delete My Account</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

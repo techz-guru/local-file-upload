@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Marketplace{% endblock %}
+{% block content %}
+<div class="wrap">
+    <div class="fbar">
+        <form method="GET"><div class="fbar-r">
+            <input type="text" name="q" value="{{ current_q }}" placeholder="Search…" class="fi" aria-label="Search">
+            <select name="category" class="fsel" aria-label="Category"><option value="">All Categories</option>{% for c in categories %}<option value="{{ c }}" {% if c == current_cat %}selected{% endif %}>{{ c }}</option>{% endfor %}</select>
+            <select name="location" class="fsel" aria-label="Location"><option value="">All Locations</option>{% for l in locations %}<option value="{{ l }}" {% if l == current_loc %}selected{% endif %}>{{ l }}</option>{% endfor %}</select>
+            <label class="fck" style="white-space:nowrap"><input type="checkbox" name="organic" value="1" {% if organic_only %}checked{% endif %}> Organic</label>
+            <button type="submit" class="btn btn-p btn-sm">Filter</button>
+        </div></form>
+    </div>
+    <p style="font-size:12px;color:var(--tx3);margin-bottom:14px"><strong>{{ products|length }}</strong> product{{ 's' if products|length != 1 }}</p>
+    {% if products %}
+    <div class="pgrid">
+        {% for p in products %}
+        <article class="pc">
+            <a href="{{ url_for('product_detail', id=p.id) }}">
+                {% if p.has_image() %}<img src="{{ p.get_image() }}" alt="{{ p.name }}" class="pc-img" loading="lazy">
+                {% else %}<div class="pc-no">🌿</div>{% endif %}
+            </a>
+            <div class="pc-b">
+                <div class="pc-top"><h3>{{ p.name }}</h3>{% if p.organic %}<span class="badge b-org">Organic</span>{% endif %}</div>
+                {% if p.farm_name %}<p class="pc-m">📍 {{ p.farm_name }}{% if p.location %}, {{ p.location }}{% endif %}</p>{% endif %}
+                {% if p.freshness() %}<span class="fresh">{{ p.freshness() }}</span>{% endif %}
+                <p class="pc-st">{{ p.available }} {{ p.unit }} available</p>
+                <p class="pc-pr mt4">£{{ '%.2f'|format(p.price) }}<small>/{{ p.unit }}</small></p>
+                {% if user and user.role == 'buyer' %}
+                <form action="{{ url_for('cart_add', id=p.id) }}" method="POST" class="mt8"><input type="hidden" name="qty" value="1"><button type="submit" class="btn btn-d btn-bl btn-sm">Add to Basket</button></form>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty"><div class="empty-i">🌱</div><p>No products yet.</p>
+    {% if user and user.role == 'farmer' %}<a href="{{ url_for('add_product') }}" class="btn btn-p mt16">Add your first product</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

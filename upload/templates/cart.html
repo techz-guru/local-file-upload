@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Basket{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:700px">
+    <h1 class="ptitle">Your Basket</h1>
+    {% if cart %}
+        {% for item in cart %}
+        <div class="oc flex ac jb" style="flex-wrap:wrap;gap:12px">
+            <div class="flex ac g12">
+                {% if item.image %}<img src="{{ item.image }}" alt="" style="width:50px;height:50px;object-fit:cover;border-radius:7px">
+                {% else %}<div style="width:50px;height:50px;border-radius:7px;background:var(--gl);display:grid;place-items:center">🌿</div>{% endif %}
+                <div><strong style="font-size:13px">{{ item.name }}</strong><p class="pc-m">£{{ '%.2f'|format(item.price) }}/{{ item.unit }}</p></div>
+            </div>
+            <div class="flex ac g8">
+                <form action="{{ url_for('cart_update', id=item.product_id) }}" method="POST" class="flex ac g8">
+                    <input type="number" name="qty" value="{{ item.qty }}" min="0" step="0.5" class="fi" style="width:65px;padding:7px 9px;font-size:13px">
+                    <button type="submit" class="btn btn-o btn-sm">Update</button>
+                </form>
+                <form action="{{ url_for('cart_remove', id=item.product_id) }}" method="POST"><button type="submit" class="btn btn-r btn-sm" aria-label="Remove">✕</button></form>
+                <strong style="min-width:65px;text-align:right">£{{ '%.2f'|format(item.price * item.qty) }}</strong>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="div"></div>
+        <div class="flex ac jb"><span style="font-size:15px;font-weight:600">Total</span><span style="font-size:20px;font-weight:700;color:var(--g)">£{{ '%.2f'|format(total) }}</span></div>
+        <div class="flex g12 mt24"><a href="{{ url_for('marketplace') }}" class="btn btn-o">Continue Shopping</a><a href="{{ url_for('checkout') }}" class="btn btn-p">Checkout</a></div>
+    {% else %}
+        <div class="empty"><div class="empty-i">🛒</div><p>Your basket is empty.</p><a href="{{ url_for('marketplace') }}" class="btn btn-p mt16">Browse Marketplace</a></div>
+    {% endif %}
+</div>
+{% endblock %}

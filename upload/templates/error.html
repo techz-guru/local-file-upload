@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}{{ code }}{% endblock %}
+{% block content %}
+<div class="wrap tc" style="padding:70px 20px">
+    <div style="font-size:50px;margin-bottom:10px">{{ '🔒' if code == 403 else '🔍' }}</div>
+    <h1 style="font-size:38px;font-weight:700;margin-bottom:4px">{{ code }}</h1>
+    <p style="color:var(--tx2);margin-bottom:20px">{{ msg }}</p>
+    <a href="{{ url_for('index') }}" class="btn btn-p">Go Home</a>
+</div>
+{% endblock %}

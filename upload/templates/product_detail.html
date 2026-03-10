@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="wrap">
+    <a href="{{ url_for('marketplace') }}" class="link">← Marketplace</a>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:14px" class="pdg">
+        <div>
+            {% if product.has_image() %}<img src="{{ product.get_image() }}" alt="{{ product.name }}" style="width:100%;height:360px;object-fit:cover;border-radius:var(--rl)">
+            {% else %}<div class="pc-no" style="height:360px;border-radius:var(--rl);font-size:64px">🌿</div>{% endif %}
+        </div>
+        <div>
+            <div class="flex ac g8 mb8"><h1 style="font-size:26px;font-weight:700">{{ product.name }}</h1>{% if product.organic %}<span class="badge b-org">Organic</span>{% endif %}</div>
+            {% if product.farm_name %}<p class="pc-m mb8">📍 {{ product.farm_name }}{% if product.location %}, {{ product.location }}{% endif %}</p>{% endif %}
+            {% if product.freshness() %}<span class="fresh mb8" style="display:inline-block">{{ product.freshness() }}</span>{% endif %}
+            {% if product.description %}<p style="color:var(--tx2);margin:12px 0;line-height:1.6;font-size:14px">{{ product.description }}</p>{% endif %}
+            <p class="pc-st mb16">{{ product.available }} {{ product.unit }} available</p>
+            <p class="pc-pr" style="font-size:28px;margin-bottom:18px">£{{ '%.2f'|format(product.price) }}<small>/{{ product.unit }}</small></p>
+            {% if user and user.role == 'buyer' %}
+            <form action="{{ url_for('cart_add', id=product.id) }}" method="POST" class="flex g12 ac">
+                <input type="number" name="qty" value="1" min="0.5" step="0.5" max="{{ product.available }}" class="fi" style="width:80px">
+                <button type="submit" class="btn btn-p">Add to Basket</button>
+            </form>
+            {% elif not user %}<a href="{{ url_for('register') }}" class="btn btn-p">Sign up to buy</a>{% endif %}
+        </div>
+    </div>
+    {% if related %}<h2 class="stitle mt24">You might also like</h2>
+    <div class="pgrid">{% for r in related %}<article class="pc"><a href="{{ url_for('product_detail', id=r.id) }}">{% if r.has_image() %}<img src="{{ r.get_image() }}" alt="{{ r.name }}" class="pc-img">{% else %}<div class="pc-no">🌿</div>{% endif %}</a><div class="pc-b"><h3>{{ r.name }}</h3><span class="pc-pr">£{{ '%.2f'|format(r.price) }}<small>/{{ r.unit }}</small></span></div></article>{% endfor %}</div>
+    {% endif %}
+</div>
+<style>@media(max-width:768px){.pdg{grid-template-columns:1fr!important}}</style>
+{% endblock %}

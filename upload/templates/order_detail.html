@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:660px">
+    {% if user.role == 'buyer' %}<a href="{{ url_for('my_orders') }}" class="link">← Orders</a>
+    {% else %}<a href="{{ url_for('dashboard') }}" class="link">← Dashboard</a>{% endif %}
+
+    <div class="flex ac g8 mt16 mb16"><h1 style="font-size:22px;font-weight:700">Order #{{ order.id }}</h1><span class="badge b-{{ order.status }}">{{ order.status|upper }}</span></div>
+
+    {% if order.status != 'cancelled' %}
+    <div class="card cp mb16">
+        <p class="stat-l mb8">Tracking</p>
+        <div class="track">
+            {% set steps = ['pending','preparing','ready','dispatched','delivered'] %}
+            {% set idx = steps.index(order.status) if order.status in steps else -1 %}
+            {% for s in steps %}
+                {% if not loop.first %}<div class="tline {% if loop.index0 <= idx %}done{% endif %}"></div>{% endif %}
+                <div class="ts"><div class="td {% if loop.index0 < idx %}done{% endif %} {% if loop.index0 == idx %}now{% endif %}"></div><span class="tl {% if loop.index0 == idx %}now{% endif %}">{{ s }}</span></div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card cp mb16">
+        <p class="oc-m mb4">📅 Placed {{ order.placed_on.strftime('%d/%m/%Y %H:%M') }}</p>
+        {% if order.scheduled_for %}<p class="oc-m mb4">🚚 Delivery: {{ order.scheduled_for.strftime('%d/%m/%Y') }}</p>{% endif %}
+        {% if order.delivery_notes %}<p class="oc-m mb4">📝 {{ order.delivery_notes }}</p>{% endif %}
+        <p class="oc-m">👤 {{ order.buyer.full_name }}</p>
+    </div>
+
+    <div class="card cp mb16">
+        <h2 style="font-size:14px;font-weight:700;margin-bottom:12px">Items</h2>
+        {% for item in order.items %}
+        <div class="flex ac jb" style="padding:6px 0;border-bottom:1px solid var(--brl);font-size:13px">
+            <div><strong>{{ item.product_name }}</strong><br><span class="oc-m">{{ item.quantity }} × £{{ '%.2f'|format(item.unit_price) }}</span></div>
+            <strong>£{{ '%.2f'|format(item.quantity * item.unit_price) }}</strong>
+        </div>
+        {% endfor %}
+        <div class="flex ac jb mt16"><strong>Total</strong><strong style="font-size:18px;color:var(--g)">£{{ '%.2f'|format(order.total) }}</strong></div>
+    </div>
+
+    {% if user.role == 'buyer' and order.status == 'pending' %}
+    <form action="{{ url_for('cancel_order', id=order.id) }}" method="POST" onsubmit="return confirm('Cancel?')"><button type="submit" class="btn btn-r">Cancel Order</button></form>
+    {% endif %}
+    {% if user.role == 'farmer' and order.next_action() %}
+    <form action="{{ url_for('advance_order', id=order.id) }}" method="POST"><button type="submit" class="btn btn-p">{{ order.next_action() }}</button></form>
+    {% endif %}
+</div>
+{% endblock %}
